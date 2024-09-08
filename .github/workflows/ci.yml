@@ -23,9 +23,6 @@ jobs:
           dotnet workload restore
           dotnet workload install android
 
-      - name: Install JDK
-        run: sudo apt-get update && sudo apt-get install -y openjdk-11-jdk
-
       - name: Install Android SDK Command Line Tools
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools/latest
