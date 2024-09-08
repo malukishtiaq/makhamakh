@@ -1,0 +1,46 @@
+name: Build Xamarin Android
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Xamarin
+        uses: xamarin/setup-xamarin@v1
+        with:
+          xamarin-version: latest
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk
+
+      - name: Build APK and AAB
+        run: |
+          mkdir -p $HOME/.local/share/NUnit
+          nuget restore WoWonder.sln
+          msbuild /p:Configuration=Release /p:AndroidPackageFormat=aab /p:AndroidSigningKeyAlias=youralias /p:AndroidSigningKeyPass=yourpassword /p:AndroidSigningKeyStore=yourkeystore WoWonder.csproj
+          msbuild /p:Configuration=Release /p:AndroidPackageFormat=apk WoWonder.csproj
+          
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: path/to/your/Release/*.apk
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v3
+        with:
+          name: aab
+          path: path/to/your/Release/*.aab
