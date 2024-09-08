@@ -19,9 +19,9 @@ jobs:
       - name: Install .NET SDK 7.x
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.x'
+          dotnet-version: '7.x' # Ensure this matches your project version
 
-      - name: Install Android Workload
+      - name: Install Android Workload for .NET 7
         run: dotnet workload install android
 
       - name: Install JDK
@@ -36,27 +36,35 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
           unzip commandlinetools-linux-8512546_latest.zip
           rm -f commandlinetools-linux-8512546_latest.zip
-          mv cmdline-tools/* . 
-          rm -rf cmdline-tools
+          mv cmdline-tools/* . # Move extracted tools to the correct directory
+          rm -rf cmdline-tools # Remove any remaining empty directory
+          ls -l $HOME/android-sdk/cmdline-tools/latest/bin # List files for verification
 
       - name: Set environment variables
         run: |
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
 
-      - name: Install Android SDK Packages
+      - name: Verify SDK Manager Location
+        run: |
+          echo "SDK Manager location:"
+          ls -l $HOME/android-sdk/cmdline-tools/latest/bin
+          echo "Checking sdkmanager version:"
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --version
+
+      - name: Install SDK Packages
         run: |
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0" "platform-tools"
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0" # Updated to Android 33
 
       - name: Restore NuGet packages
         run: dotnet restore WoWonder.sln
 
       - name: Build APK and AAB
         run: |
-          dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk
-          msbuild /p:Configuration=Release /p:AndroidPackageFormat=aab WoWonder/WoWonder.csproj /p:AndroidSdkDirectory=$HOME/android-sdk
-          msbuild /p:Configuration=Release /p:AndroidPackageFormat=apk WoWonder/WoWonder.csproj /p:AndroidSdkDirectory=$HOME/android-sdk
+          dotnet build WoWonder.sln -c Release
+          msbuild /p:Configuration=Release /p:AndroidPackageFormat=aab YourProject.csproj
+          msbuild /p:Configuration=Release /p:AndroidPackageFormat=apk YourProject.csproj
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
