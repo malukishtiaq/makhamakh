@@ -51,3 +51,7 @@ jobs:
 
     - name: Restore NuGet packages
       run: dotnet restore WoWonder.sln
+
+    - name: Build AAB
+      run: dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk /p:AndroidPackageFormat=aab
+
