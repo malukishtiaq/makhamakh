@@ -19,7 +19,7 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'  # Use the latest .NET 8 SDK
+          dotnet-version: '8.0.x'
 
       - name: Install JDK
         run: |
@@ -34,32 +34,24 @@ jobs:
           unzip commandlinetools-linux-8512546_latest.zip
           rm -f commandlinetools-linux-8512546_latest.zip
           mv cmdline-tools/* . # Move extracted tools to the correct directory
-          rm -rf cmdline-tools # Remove any remaining empty directory
-          ls -l $HOME/android-sdk/cmdline-tools/latest/bin # List files for verification
+          rm -rf cmdline-tools
 
       - name: Set environment variables
         run: |
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
 
-      - name: Verify SDK Manager Location
-        run: |
-          echo "SDK Manager location:"
-          ls -l $HOME/android-sdk/cmdline-tools/latest/bin
-          echo "Checking sdkmanager version:"
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --version
-
-      - name: Install SDK Packages
+      - name: Install Android SDK Packages
         run: |
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" # Update versions as needed
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0" "platforms;android-30" "build-tools;30.0.3" # Install API level 33 and 30
 
       - name: Install Mono
         run: |
           sudo apt-get install -y mono-complete
 
       - name: Restore .NET Workloads
-        run: dotnet workload restore # This is the critical step
+        run: dotnet workload restore
 
       - name: Restore NuGet packages
         run: dotnet restore WoWonder.sln
