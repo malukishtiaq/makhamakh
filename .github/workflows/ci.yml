@@ -18,6 +18,11 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Install .NET workloads
+      run: |
+        dotnet workload restore
+        dotnet workload install android
+
     - name: Install Android SDK
       run: |
         # Create directory for Android SDK
@@ -46,6 +51,3 @@ jobs:
 
     - name: Restore NuGet packages
       run: dotnet restore WoWonder.sln
-
-    # - name: Build APK
-    #   run: dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk
