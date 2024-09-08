@@ -32,13 +32,27 @@ jobs:
           cd $HOME/android-sdk/cmdline-tools/latest
           wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
           unzip commandlinetools-linux-8512546_latest.zip
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" # Update versions as needed
+          rm -f commandlinetools-linux-8512546_latest.zip
+          mv cmdline-tools/* . # Move extracted tools to the correct directory
+          rm -rf cmdline-tools # Remove any remaining empty directory
+          ls -l $HOME/android-sdk/cmdline-tools/latest/bin # List files for verification
 
       - name: Set environment variables
         run: |
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Verify SDK Manager Location
+        run: |
+          echo "SDK Manager location:"
+          ls -l $HOME/android-sdk/cmdline-tools/latest/bin
+          echo "Checking sdkmanager version:"
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --version
+
+      - name: Install SDK Packages
+        run: |
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" # Update versions as needed
 
       - name: Restore NuGet packages
         run: dotnet restore YourSolution.sln
@@ -60,3 +74,4 @@ jobs:
         with:
           name: aab
           path: path/to/your/Release/*.aab
+
