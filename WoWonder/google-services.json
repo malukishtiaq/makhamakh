@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "194122361710",
+    "project_id": "makhamakh-c84ad",
+    "storage_bucket": "makhamakh-c84ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194122361710:android:380d370977969b4b0caf7f",
+        "android_client_info": {
+          "package_name": "com.makhamakh.chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAutAVeIhlenK8IincykLTSEG76Exi3uHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194122361710:android:232383fba6995b120caf7f",
+        "android_client_info": {
+          "package_name": "makhamakh.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAutAVeIhlenK8IincykLTSEG76Exi3uHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
