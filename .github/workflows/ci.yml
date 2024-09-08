@@ -1,64 +1,35 @@
-name: Build APK
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
 
-      - name: Install .NET workloads
-        run: dotnet workload install android
+    - name: Install Android SDK
+      run: |
+        mkdir -p $HOME/android-sdk
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O tools.zip
+        unzip -q tools.zip -d $HOME/android-sdk
+        rm tools.zip
+        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --update
+        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
+        
+    - name: Create directories for symbolic link
+      run: |
+        mkdir -p /usr/local/android-sdk/platforms
 
-      - name: Install Android SDK and Platforms
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk wget unzip
-          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          unzip cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
-          rm cmdline-tools.zip
-          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
+    - name: Create symbolic link for android-33
+      run: |
+        ln -s $HOME/android-sdk/platforms/android-33 /usr/local/android-sdk/platforms/android-33
 
-      - name: Set environment variables
-        run: echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+    - name: Restore NuGet packages
+      run: dotnet restore WoWonder.sln
 
-      - name: Restore NuGet packages
-        run: dotnet restore WoWonder.sln
-
-      - name: Verify Android SDK installation
-        run: ls -la $HOME/android-sdk/platforms
-
-      - name: Verify android.jar presence
-        run: ls -la $HOME/android-sdk/platforms/android-33
-
-      - name: Set up environment variables
-        run: |
-          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$HOME/android-sdk/platform-tools:$HOME/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
-      
-      - name: Update SDK tools
-        run: |
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --update
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
-
-      - name: Create symbolic link for android-33
-        run: |
-          ln -s $HOME/android-sdk/platforms/android-33 /usr/local/android-sdk/platforms/android-33
-
-      - name: Build APK
-        run: dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk
-
+    - name: Build APK
+      run: dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk
