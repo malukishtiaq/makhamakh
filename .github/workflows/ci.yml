@@ -26,26 +26,27 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openjdk-11-jdk
 
-      - name: Install Android SDK
+      - name: Install Android SDK Command Line Tools
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
           cd $HOME/android-sdk/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
           unzip commandlinetools-linux-8512546_latest.zip
+          mv cmdline-tools/* . # Move extracted tools to the correct location
+          rm -rf cmdline-tools
           yes | $HOME/android-sdk/cmdline-tools/bin/sdkmanager --licenses
           $HOME/android-sdk/cmdline-tools/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" # Update versions as needed
 
       - name: Set environment variables
         run: |
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$PATH:$HOME/android-sdk/cmdline-tools/bin" >> $GITHUB_ENV
+          echo "PATH=$HOME/android-sdk/cmdline-tools/bin:$PATH" >> $GITHUB_ENV
 
       - name: Restore NuGet packages
         run: dotnet restore YourSolution.sln
 
       - name: Build APK and AAB
         run: |
-          mkdir -p $HOME/.local/share/NUnit
           dotnet build YourSolution.sln -c Release
           msbuild /p:Configuration=Release /p:AndroidPackageFormat=aab YourProject.csproj
           msbuild /p:Configuration=Release /p:AndroidPackageFormat=apk YourProject.csproj
