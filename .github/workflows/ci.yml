@@ -1,3 +1,10 @@
+name: Build APK
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,20 +20,25 @@ jobs:
 
     - name: Install Android SDK
       run: |
+        # Create directory for Android SDK
         mkdir -p $HOME/android-sdk
+
+        # Download and install command line tools
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O tools.zip
         unzip -q tools.zip -d $HOME/android-sdk
         rm tools.zip
+
+        # Accept licenses and install required components
         yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --update
         yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
-        
+
     - name: Create directories for symbolic link
       run: |
-        mkdir -p /usr/local/android-sdk/platforms
+        sudo mkdir -p /usr/local/android-sdk/platforms
 
     - name: Create symbolic link for android-33
       run: |
-        ln -s $HOME/android-sdk/platforms/android-33 /usr/local/android-sdk/platforms/android-33
+        sudo ln -s $HOME/android-sdk/platforms/android-33 /usr/local/android-sdk/platforms/android-33
 
     - name: Restore NuGet packages
       run: dotnet restore WoWonder.sln
