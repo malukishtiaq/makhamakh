@@ -13,42 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.x'
-
-      - name: Install .NET Workloads
-        run: |
-          dotnet workload restore
-          dotnet workload install android
-
-      - name: Install JDK
-        run: sudo apt-get update && sudo apt-get install -y openjdk-11-jdk
-
-      - name: Install Android SDK Command Line Tools
-        run: |
-          mkdir -p $HOME/android-sdk/cmdline-tools/latest
-          cd $HOME/android-sdk/cmdline-tools/latest
-          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-          unzip commandlinetools-linux-8512546_latest.zip
-          rm -f commandlinetools-linux-8512546_latest.zip
-          mv cmdline-tools/* . # Move extracted tools to the correct directory
-          rm -rf cmdline-tools
-          ls -l $HOME/android-sdk/cmdline-tools/latest/bin
-
-      - name: Set environment variables
+      - name: Set up environment
         run: |
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
           echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
 
-      - name: Install SDK Packages
-        run: |
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.2" # Ensure correct versions are installed
-
-      - name: Restore NuGet packages
-        run: dotnet restore WoWonder.sln
-
       - name: Build APK
-        run: dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk
+        run: dotnet build WoWonder.sln -c Release
