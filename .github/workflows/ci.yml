@@ -31,8 +31,11 @@ jobs:
         # Create 'latest' directory to match SDK Manager's expected path
         mkdir -p $HOME/android-sdk/cmdline-tools/latest
 
-        # Move extracted files to 'latest' directory
-        mv $HOME/android-sdk/cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
+        # Move extracted files to 'latest' directory, avoiding self-reference
+        mv $HOME/android-sdk/cmdline-tools/cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
+
+        # Remove the now-empty original directory
+        rmdir $HOME/android-sdk/cmdline-tools/cmdline-tools
 
         # Debug: List directory contents
         ls -la $HOME/android-sdk/cmdline-tools/latest/bin
