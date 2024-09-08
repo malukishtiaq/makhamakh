@@ -59,5 +59,6 @@ jobs:
         run: |
           ln -s $HOME/android-sdk/platforms/android-33 /usr/local/android-sdk/platforms/android-33
 
-      # - name: Build APK
-      #   run: dotnet build WoWonder.sln -c Release
+      - name: Build APK
+        run: dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk
+
