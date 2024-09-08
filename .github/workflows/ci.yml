@@ -19,7 +19,7 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.x' # Update this to the version you need
+          dotnet-version: '8.0.x'  # Use the latest .NET 8 SDK
 
       - name: Install JDK
         run: |
@@ -58,17 +58,17 @@ jobs:
         run: |
           sudo apt-get install -y mono-complete
 
+      - name: Restore .NET Workloads
+        run: dotnet workload restore # This is the critical step
+
       - name: Restore NuGet packages
         run: dotnet restore WoWonder.sln
-
-      - name: Restore .NET Workloads
-        run: dotnet workload restore
 
       - name: Build APK and AAB
         run: |
           dotnet build WoWonder.sln -c Release
-          msbuild /p:Configuration=Release /p:AndroidPackageFormat=aab YourProject.csproj
-          msbuild /p:Configuration=Release /p:AndroidPackageFormat=apk YourProject.csproj
+          msbuild /p:Configuration=Release /p:AndroidPackageFormat=aab WoWonder/WoWonder.csproj
+          msbuild /p:Configuration=Release /p:AndroidPackageFormat=apk WoWonder/WoWonder.csproj
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
