@@ -53,11 +53,11 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore WoWonder.sln
 
-      - name: Build APK
-        run: dotnet build WoWonder.sln -c Release
+      # - name: Build APK
+      #   run: dotnet build WoWonder.sln -c Release
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: apk
-          path: path/to/your/Release/*.apk
+      # - name: Upload APK
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: apk
+      #     path: path/to/your/Release/*.apk
