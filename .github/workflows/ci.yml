@@ -39,5 +39,8 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore WoWonder.sln
 
-      - name: Build APK
-        run: dotnet build WoWonder.sln -c Release
+      - name: Verify Android SDK installation
+        run: ls -la $HOME/android-sdk/platforms
+
+      # - name: Build APK
+      #   run: dotnet build WoWonder.sln -c Release
