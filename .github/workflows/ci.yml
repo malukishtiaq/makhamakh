@@ -20,3 +20,5 @@ jobs:
 
       - name: Build APK
         run: dotnet build WoWonder.sln -c Release
+
+        
