@@ -1,9 +1,9 @@
-name: Build Xamarin.Android APK/AAB
+name: Build APK
 
 on:
   push:
     branches:
-      - main # or the branch you want to build
+      - main
 
 jobs:
   build:
@@ -22,6 +22,9 @@ jobs:
         run: |
           dotnet workload restore
           dotnet workload install android
+
+      - name: Install JDK
+        run: sudo apt-get update && sudo apt-get install -y openjdk-11-jdk
 
       - name: Install Android SDK Command Line Tools
         run: |
@@ -47,17 +50,5 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore WoWonder.sln
 
-      - name: Verify Android SDK Installation
-        run: |
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --list
-          if [[ $? -ne 0 ]]; then
-            echo "Error: Android SDK installation failed. Please check the installation and permissions."
-            exit 1
-          fi
-
-      - name: Print .NET Core and NuGet Versions
-        run: |
-          dotnet --version
-          dotnet --info
-      - name: Build APK/AAB
+      - name: Build APK
         run: dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk
