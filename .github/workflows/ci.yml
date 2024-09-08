@@ -45,6 +45,19 @@ jobs:
       - name: Verify android.jar presence
         run: ls -la $HOME/android-sdk/platforms/android-33
 
+      - name: Set up environment variables
+        run: |
+          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$HOME/android-sdk/platform-tools:$HOME/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
+      
+      - name: Update SDK tools
+        run: |
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --update
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
+
+      - name: Create symbolic link for android-33
+        run: |
+          ln -s $HOME/android-sdk/platforms/android-33 /usr/local/android-sdk/platforms/android-33
 
       # - name: Build APK
       #   run: dotnet build WoWonder.sln -c Release
