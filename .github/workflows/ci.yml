@@ -42,5 +42,9 @@ jobs:
       - name: Verify Android SDK installation
         run: ls -la $HOME/android-sdk/platforms
 
+      - name: Verify android.jar presence
+        run: ls -la $HOME/android-sdk/platforms/android-33
+
+
       # - name: Build APK
       #   run: dotnet build WoWonder.sln -c Release
