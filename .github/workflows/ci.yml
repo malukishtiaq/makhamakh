@@ -47,20 +47,16 @@ jobs:
       - name: Install Android SDK Packages
         run: |
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
-
-      - name: Install Mono
-        run: |
-          sudo apt-get install -y mono-complete
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0" "platform-tools"
 
       - name: Restore NuGet packages
         run: dotnet restore WoWonder.sln
 
       - name: Build APK and AAB
         run: |
-          dotnet build WoWonder.sln -c Release
-          msbuild /p:Configuration=Release /p:AndroidPackageFormat=aab WoWonder/WoWonder.csproj
-          msbuild /p:Configuration=Release /p:AndroidPackageFormat=apk WoWonder/WoWonder.csproj
+          dotnet build WoWonder.sln -c Release /p:AndroidSdkDirectory=$HOME/android-sdk
+          msbuild /p:Configuration=Release /p:AndroidPackageFormat=aab WoWonder/WoWonder.csproj /p:AndroidSdkDirectory=$HOME/android-sdk
+          msbuild /p:Configuration=Release /p:AndroidPackageFormat=apk WoWonder/WoWonder.csproj /p:AndroidSdkDirectory=$HOME/android-sdk
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
