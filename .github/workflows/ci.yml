@@ -19,7 +19,7 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.x' # Update to the version needed
+          dotnet-version: '7.x' # Update this to the version you need
 
       - name: Install JDK
         run: |
@@ -74,10 +74,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: apk
-          path: path/to/your/Release/*.apk # Update path as needed
+          path: path/to/your/Release/*.apk
 
       - name: Upload AAB
         uses: actions/upload-artifact@v3
         with:
           name: aab
-          path: path/to/your/Release/*.aab # Update path as needed
+          path: path/to/your/Release/*.aab
